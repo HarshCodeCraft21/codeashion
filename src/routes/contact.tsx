@@ -1,19 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Send, MapPin, Mail, Phone, Clock, Linkedin, Instagram } from "lucide-react";
 
-export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact Us — Codeashion Technologies" },
-      { name: "description", content: "Have a project in mind? We'd love to hear about it. Get in touch with us for a free consultation." },
-    ],
-  }),
-  component: ContactPage,
-});
-
-function ContactPage() {
+export default function ContactPage() {
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#1e293b] font-sans selection:bg-teal-100 selection:text-teal-900">
       <SiteHeader />

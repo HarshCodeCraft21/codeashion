@@ -1,16 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-
-export const Route = createFileRoute("/technologies")({
-  head: () => ({
-    meta: [
-      { title: "Technologies We Work With — Codeashion Technologies" },
-      { name: "description", content: "Explore the cutting-edge technologies, frameworks, and tools we use to build robust and scalable digital solutions." },
-    ],
-  }),
-  component: TechnologiesPage,
-});
 
 const TECH_STACK = [
   {
@@ -83,7 +72,7 @@ const TECH_STACK = [
   }
 ];
 
-function TechnologiesPage() {
+export default function TechnologiesPage() {
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#1e293b] font-sans selection:bg-teal-100 selection:text-teal-900">
       <SiteHeader />

@@ -1,16 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-
-export const Route = createFileRoute("/portfolio")({
-  head: () => ({
-    meta: [
-      { title: "Portfolio & Case Studies — Codeashion Technologies" },
-      { name: "description", content: "Explore our successful projects and case studies across various industries." },
-    ],
-  }),
-  component: PortfolioPage,
-});
 
 const PROJECTS = [
   {
@@ -57,7 +47,15 @@ const PROJECTS = [
   }
 ];
 
-function PortfolioPage() {
+const CATEGORIES = ["All", "Web Development", "App Development", "Software Development"];
+
+export default function PortfolioPage() {
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const filteredProjects = activeCategory === "All" 
+    ? PROJECTS 
+    : PROJECTS.filter(project => project.category === activeCategory);
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#1e293b] font-sans selection:bg-teal-100 selection:text-teal-900">
       <SiteHeader />
@@ -76,64 +74,71 @@ function PortfolioPage() {
 
         {/* Filters */}
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <button className="px-5 py-2.5 rounded-full text-sm font-semibold bg-[#1c2a41] text-white shadow-sm hover:bg-[#253755] transition-colors">
-            All
-          </button>
-          <button className="px-5 py-2.5 rounded-full text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-            Web Development
-          </button>
-          <button className="px-5 py-2.5 rounded-full text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-            App Development
-          </button>
-          <button className="px-5 py-2.5 rounded-full text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-            Software Development
-          </button>
+          {CATEGORIES.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                activeCategory === category
+                  ? "bg-[#1c2a41] text-white shadow-sm hover:bg-[#253755]"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
         </div>
       </section>
 
       {/* Projects Grid */}
       <section className="px-4 pb-24 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
-          {PROJECTS.map((project, idx) => (
-            <div key={idx} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300 group">
-              {/* Image Container */}
-              <div className="p-4 sm:p-6 bg-slate-50 border-b border-slate-100">
-                <div className="rounded-2xl overflow-hidden shadow-sm relative pt-[60%] bg-[#e2e8f0]">
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+        {filteredProjects.length > 0 ? (
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
+            {filteredProjects.map((project, idx) => (
+              <div key={idx} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300 group">
+                {/* Image Container */}
+                <div className="p-4 sm:p-6 bg-slate-50 border-b border-slate-100">
+                  <div className="rounded-2xl overflow-hidden shadow-sm relative pt-[60%] bg-[#e2e8f0]">
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
                 </div>
-              </div>
-              
-              {/* Content */}
-              <div className="p-8 sm:p-10">
-                <span className="text-xs font-bold text-teal-500 uppercase tracking-wider block mb-3">
-                  {project.category}
-                </span>
-                <h3 className="text-2xl font-bold text-[#1c2a41] mb-4">
-                  {project.title}
-                </h3>
-                <p className="text-[15px] text-slate-500 leading-relaxed mb-8">
-                  {project.desc}
-                </p>
                 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag, tagIdx) => (
-                    <span 
-                      key={tagIdx} 
-                      className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-md text-xs font-semibold"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                {/* Content */}
+                <div className="p-8 sm:p-10">
+                  <span className="text-xs font-bold text-teal-500 uppercase tracking-wider block mb-3">
+                    {project.category}
+                  </span>
+                  <h3 className="text-2xl font-bold text-[#1c2a41] mb-4">
+                    {project.title}
+                  </h3>
+                  <p className="text-[15px] text-slate-500 leading-relaxed mb-8">
+                    {project.desc}
+                  </p>
+                  
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag, tagIdx) => (
+                      <span 
+                        key={tagIdx} 
+                        className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-md text-xs font-semibold"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-[17px] text-slate-500">No projects found in this category.</p>
+          </div>
+        )}
       </section>
 
       {/* Pre-Footer CTA */}

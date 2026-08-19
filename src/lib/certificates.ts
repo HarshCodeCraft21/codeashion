@@ -1,4 +1,16 @@
-import type { Certificate } from "./certificates.functions";
+export type CertificateStatus = "verified" | "expired";
+
+export type Certificate = {
+  certificateId: string;
+  internName: string;
+  rollNumber: string;
+  internshipRole: string;
+  duration: string;
+  organization: string;
+  authorizedBy: string;
+  position: string;
+  status: CertificateStatus;
+};
 
 const RECORDS: Certificate[] = [
   {

@@ -1,19 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Award, Briefcase, CheckCircle, ShieldCheck, Target, Users } from "lucide-react";
 
-export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Us — Codeashion Technologies" },
-      { name: "description", content: "Learn about Codeashion Technologies, our mission, vision, and the team driving digital transformation." },
-    ],
-  }),
-  component: AboutPage,
-});
-
-function AboutPage() {
+export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#1e293b] font-sans selection:bg-teal-100 selection:text-teal-900">
       <SiteHeader />

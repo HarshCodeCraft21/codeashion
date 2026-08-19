@@ -1,7 +1,5 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Navigate } from "react-router-dom";
 
-export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/verify", search: { certificateId: undefined } });
-  },
-});
+export default function IndexPage() {
+  return <Navigate to="/verify" replace />;
+}

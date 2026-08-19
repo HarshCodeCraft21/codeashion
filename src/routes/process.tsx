@@ -1,17 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CheckCircle2 } from "lucide-react";
-
-export const Route = createFileRoute("/process")({
-  head: () => ({
-    meta: [
-      { title: "How We Deliver Excellence — Codeashion Technologies" },
-      { name: "description", content: "A proven, transparent process ensures we deliver high-quality software solutions on time and within budget." },
-    ],
-  }),
-  component: ProcessPage,
-});
 
 const PROCESS_STEPS = [
   {
@@ -73,7 +62,7 @@ const FEATURES = [
   }
 ];
 
-function ProcessPage() {
+export default function ProcessPage() {
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#1e293b] font-sans selection:bg-teal-100 selection:text-teal-900">
       <SiteHeader />

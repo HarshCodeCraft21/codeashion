@@ -1,44 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { AlertTriangle, BadgeCheck, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
-import { verifyCertificate } from "@/lib/certificates.functions";
-
-export const Route = createFileRoute("/verify")({
-  validateSearch: (search: Record<string, unknown>) => {
-    const raw = search["certificateId"];
-    const certificateId = typeof raw === "string" && raw.trim() ? raw.trim() : undefined;
-    return { certificateId };
-  },
-  head: () => ({
-    meta: [
-      { title: "Verify Certificate — Codeashion Technologies" },
-      {
-        name: "description",
-        content:
-          "Verify the authenticity of a certificate issued by Codeashion Technologies using its certificate ID.",
-      },
-      { property: "og:title", content: "Verify Certificate — Codeashion Technologies" },
-      {
-        property: "og:description",
-        content: "Check whether a Codeashion Technologies certificate is authentic.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: VerifyPage,
-  errorComponent: ({ error }) => (
-    <main className="mx-auto max-w-2xl px-4 py-16">
-      <p role="alert" className="text-sm text-destructive">
-        {error.message}
-      </p>
-    </main>
-  ),
-});
+import { findCertificate, type Certificate } from "@/lib/certificates";
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
@@ -51,19 +17,32 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-function VerifyPage() {
-  const { certificateId } = Route.useSearch();
-  const verify = useServerFn(verifyCertificate);
+export default function VerifyPage() {
+  const [searchParams] = useSearchParams();
+  const certificateId = searchParams.get("certificateId")?.trim();
+  
+  const [loading, setLoading] = useState(false);
+  const [certificate, setCertificate] = useState<Certificate | null>(null);
+  const [searched, setSearched] = useState(false);
 
-  const { data, isPending, isError, refetch, isFetching } = useQuery({
-    queryKey: ["certificate", certificateId],
-    enabled: Boolean(certificateId),
-    retry: 1,
-    queryFn: () => verify({ data: { id: certificateId as string } }),
-  });
+  useEffect(() => {
+    if (!certificateId) {
+      setCertificate(null);
+      setSearched(false);
+      return;
+    }
 
-  const loading = Boolean(certificateId) && (isPending || isFetching);
-  const certificate = data?.found ? data.certificate : null;
+    setLoading(true);
+    // Simulate slight network delay for effect to match previous behavior
+    const timer = setTimeout(() => {
+      const result = findCertificate(certificateId);
+      setCertificate(result);
+      setSearched(true);
+      setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [certificateId]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -109,25 +88,6 @@ function VerifyPage() {
                 ))}
               </div>
             </div>
-          ) : isError ? (
-            <div
-              role="alert"
-              className="rounded-xl border border-destructive/40 bg-card p-6 sm:p-8"
-            >
-              <div className="flex items-start gap-3">
-                <AlertTriangle aria-hidden="true" className="mt-0.5 size-6 text-destructive" />
-                <div className="min-w-0">
-                  <h2 className="text-lg font-semibold">Verification unavailable</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    We couldn&apos;t reach the certificate registry. Check your connection and try
-                    again.
-                  </p>
-                  <Button className="mt-4 min-h-11" variant="outline" onClick={() => refetch()}>
-                    Retry verification
-                  </Button>
-                </div>
-              </div>
-            </div>
           ) : certificate ? (
             <article className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
               <div className="flex flex-col gap-4 border-b border-border p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
@@ -168,7 +128,7 @@ function VerifyPage() {
                 <Field label="Position" value={certificate.position} />
               </dl>
             </article>
-          ) : (
+          ) : searched ? (
             <div role="alert" className="rounded-xl border border-border bg-card p-6 sm:p-8">
               <div className="flex items-start gap-3">
                 <AlertTriangle aria-hidden="true" className="mt-0.5 size-7 shrink-0 text-destructive" />
@@ -182,7 +142,7 @@ function VerifyPage() {
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
         </section>
       </main>
       <SiteFooter />
