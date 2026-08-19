@@ -18,7 +18,7 @@ const RECORDS: Certificate[] = [
     internName: "Ansh Jain",
     rollNumber: "5802726",
     internshipRole: "120 Hour Training",
-    duration: "12/08/2026 - 2/09/2026",
+    duration: "10/08/2026 - 2/09/2026",
     organization: "Codeashion Technologies",
     authorizedBy: "Harsh Sangani",
     position: "Junior Frontend Developer",
